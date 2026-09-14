@@ -16,32 +16,8 @@ if(form){
   const service=form.elements.service;
   if([...service.options].some(option=>option.value===choice))service.value=choice;
 
-  const createDraft=()=>{
-    const recipient=form.dataset.recipient||'sipho.makam@gmail.com';
-    const label=service.selectedOptions[0].text;
-    const name=form.elements.name.value.trim();
-    const sender=form.elements.email.value.trim();
-    const organisation=form.elements.organisation.value.trim();
-    const brief=form.elements.brief.value.trim();
-    const subject=`VEMAK website enquiry: ${label}${organisation?' — '+organisation:''}`;
-    const body=[`Name: ${name}`,`Email: ${sender}`,`Organisation: ${organisation||'Not provided'}`,`Service: ${label}`,'','Enquiry:',brief].join('\n');
-    return {recipient,subject,body};
-  };
-
-  const setStatus=message=>{document.querySelector('#form-status').textContent=message};
-
-  form.addEventListener('submit',event=>{
-    event.preventDefault();
-    const {recipient,subject,body}=createDraft();
-    setStatus(`Opening an email addressed to ${recipient}… Review it and press Send.`);
-    window.location.href=`mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  });
-
-  const gmailLink=form.querySelector('#gmail-compose');
-  if(gmailLink)gmailLink.addEventListener('click',event=>{
-    if(!form.reportValidity()){event.preventDefault();return}
-    const {recipient,subject,body}=createDraft();
-    gmailLink.href=`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setStatus(`Opening a prepared Gmail message to ${recipient}… Review it and press Send.`);
+  form.addEventListener('submit',()=>{
+    form.elements._subject.value=`VEMAK website enquiry: ${service.selectedOptions[0].text}`;
+    document.querySelector('#form-status').textContent='Sending your enquiry securely…';
   });
 }
